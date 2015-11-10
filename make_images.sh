@@ -33,9 +33,9 @@ do
         VERSION=${VERSIONLINE%:*}
         TAGS_CSV=${VERSIONLINE##*:}
         OSNAME=$(basename ${OSDIR})
-        #bash "${OSDIR}/make_${OSDIR##*/}_image.sh" -r "${VERSION}" -t "${TAGS_CSV}" -s </dev/null &>/dev/null
+        bash "${OSDIR}/make_${OSDIR##*/}_image.sh" -r "${VERSION}" -t "${TAGS_CSV}" -s </dev/null &>/dev/null
         mkdir -p "${OSDIR}/${VERSION}" &>/dev/null
-        #mv -u "rootfs_${VERSION}.tar.xz" "${OSDIR}/${VERSION}/rootfs.tar.xz" &>/dev/null
+        mv -u "rootfs_${VERSION}.tar.xz" "${OSDIR}/${VERSION}/rootfs.tar.xz" &>/dev/null
         # Copy the Default Dockerfile and/or README.md if there is none existing yet
         [ -f "${OSDIR}/${VERSION}/Dockerfile" ] || cp -a "${__dir}/_misc/Dockerfile.dist" "${OSDIR}/${VERSION}/Dockerfile"
         if [ ! -f "${OSDIR}/${VERSION}/README.md" ]
