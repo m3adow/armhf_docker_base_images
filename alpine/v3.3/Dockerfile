@@ -1,4 +1,4 @@
 FROM scratch
 MAINTAINER m3adow
-ADD rootfs.tar.xz
+ADD rootfs.tar
 CMD ["/bin/sh"]

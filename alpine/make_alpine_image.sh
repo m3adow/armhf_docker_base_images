@@ -40,9 +40,13 @@ conf() {
 
 pack() {
 	local id
-	id=$(tar --numeric-owner -C $ROOTFS -c . | docker import - ${HUB_USER}/alpine_armhf:$REL)
-
-	docker run -i -t ${HUB_USER}/alpine_armhf:${REL} printf 'alpine_armhf:%s with id=%s created!\n' $REL $id
+	#id=$(tar --numeric-owner -C $ROOTFS -c . | docker import - ${HUB_USER}/alpine_armhf:$REL)
+	#docker run -i -t ${HUB_USER}/alpine_armhf:${REL} printf 'alpine_armhf:%s with id=%s created!\n' $REL $id
+    # Optimisations taken from https://github.com/armbuild/alpine/blob/master/edge/mkimage-alpine.sh
+    tar --numeric-owner -C $ROOTFS -c . > rootfs.tar
+    
+    id=$(cat rootfs.tar | docker import - ${HUB_USER}/alpine_armhf:$REL)
+    docker run -i -t ${HUB_USER}/alpine_armhf:${REL} printf 'alpine_armhf:%s with id=%s created!\n' $REL $id
 	docker rm $(docker ps -l|tail -1|cut -f1 -d' ')
     for TAG in "${TAGS[@]}"
     do
