@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# derivated from https://github.com/docker/docker/blob/master/contrib/mkimage-alpine.sh
 set -e
+set -u
 
 [ $(id -u) -eq 0 ] || {
 	printf >&2 '%s requires root\n' "$0"
@@ -38,19 +40,24 @@ conf() {
 
 pack() {
 	local id
-	id=$(tar --numeric-owner -C $ROOTFS -c . | docker import - alpine_armhf:$REL)
+	id=$(tar --numeric-owner -C $ROOTFS -c . | docker import - ${HUB_USER}/alpine_armhf:$REL)
 
-	docker tag $id alpine_armhf:latest
-	docker run -i -t alpine_armhf printf 'alpine_armhf:%s with id=%s created!\n' $REL $id
+	docker run -i -t ${HUB_USER}/alpine_armhf:${REL} printf 'alpine_armhf:%s with id=%s created!\n' $REL $id
+	docker rm $(docker ps -l|tail -1|cut -f1 -d' ')
+    for TAG in "${TAGS[@]}"
+    do
+        docker tag ${id} ${HUB_USER}/alpine_armhf:${TAG}
+    done
 }
 
 save() {
-	[ $SAVE -eq 1 ] || return
-
-	tar --numeric-owner -C $ROOTFS -c . | xz > rootfs.tar.xz
+	if [ $SAVE -eq 1 ]
+	then
+		tar --numeric-owner -C $ROOTFS -c . | xz > rootfs_${REL}.tar.xz
+	fi
 }
 
-while getopts "hr:m:s" opt; do
+while getopts "hr:m:st:a:" opt; do
 	case $opt in
 		r)
 			REL=$OPTARG
@@ -61,18 +68,25 @@ while getopts "hr:m:s" opt; do
 		s)
 			SAVE=1
 			;;
+        t)
+            TAGS_CSV=$OPTARG
+            ;;
 		*)
 			usage
 			;;
 	esac
 done
 
+HUB_USER=${HUB_USER:-m3adow}
 REL=${REL:-latest-stable}
+TAGS_CSV=${TAGS_CSV:-${REL}}
 MIRROR=${MIRROR:-http://nl.alpinelinux.org/alpine}
 SAVE=${SAVE:-0}
 REPO=$MIRROR/$REL/main
-#ARCH=${ARCH:-$(uname -m)}
-ARCH=armhf
+ARCH=${ARCH:-$(uname -m)}
+
+# Bash arrays are better than nothing
+TAGS=(${TAGS_CSV//,/ })
 
 tmp
 getapk
@@ -80,4 +94,3 @@ mkbase
 conf
 pack
 save
-
