@@ -1,4 +1,3 @@
-FROM scratch
+FROM %HUB_USER%/alpine_armhf:%REL%
 MAINTAINER m3adow
-ADD rootfs.tar
 CMD ["/bin/sh"]

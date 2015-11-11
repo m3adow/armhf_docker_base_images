@@ -1,0 +1,100 @@
+#!/usr/bin env bash
+set -e
+set -u
+
+# Set magic variable for working dir, thx kvz.io
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+[ $(id -u) -eq 0 ] || {
+    printf >&2 '%s requires root\n' "$0"
+        exit 1
+}
+
+usage() {
+    printf >&2 '%s: [-a arch] [-d]\n' "$0"
+    exit 1
+}
+
+mkimages() {
+    cd "${__dir}"
+    # Iterate over every directory excluding dirs starting with _ or .
+    for OSDIR in $(find ${__dir} -maxdepth 1 -mindepth 1 -regextype posix-egrep -type d -regex '^\/?(\w+\/)*[^_.]\w+$')
+    do
+        OS=${OSDIR##*/}
+        VERSIONFILE="${OSDIR}/Versionfile"
+        if [ ! -f "${VERSIONFILE}" -o ! -r ${VERSIONFILE} ]
+        then
+            echo "${OS}: Error with Versionfile. Skipping."
+            continue
+        fi
+
+        while read VERSIONLINE
+        do
+            REGEGGS='^#'
+            [[ ${VERSIONLINE} =~ ${REGEGGS} ]] && continue
+            REL=${VERSIONLINE%:*}
+            TAGS_CSV=${VERSIONLINE##*:}
+            MAIN_TAG=${TAGS_CSV%%,*}
+            echo "### Processing '${VERSIONLINE}'."
+            bash "${OSDIR}/mkimage-${OS}.sh" -r "${REL}" -s </dev/null
+
+            mkdir -p "${OSDIR}/${MAIN_TAG}"
+            [ -f "rootfs.tar.xz" ] && mv "rootfs.tar.xz" "${OSDIR}/${MAIN_TAG}"
+            # Check for Default files
+            for FILE in $(ls -1 "${__dir}/${SKEL_DIR}")
+            do
+                [ -f "${OSDIR}/${REL}/${FILE}" ] || {
+                    cp --preserve=mode,ownership "${__dir}/${SKEL_DIR}/${FILE}" "${OSDIR}/${MAIN_TAG}/"
+                }
+            done
+
+            IMAGE_ID=$(docker images -q |head -1)
+            # Create correct Tags and remove unneeded ones from the creation script
+            for TAG in $(echo "${TAGS_CSV}"| sed 's/,/ /g')
+            do
+                FULL_IMAGE_NAME="${HUB_USER}/${ARCH}-${OS}:${TAG}"
+                docker tag ${IMAGE_ID}  ${FULL_IMAGE_NAME}
+                docker rmi ${OS}:${TAG} || true
+                docker push ${FULL_IMAGE_NAME}
+            done
+            # Remove the docker container started for testing the image and the last unneeded tag
+            docker rm $(docker ps -l -q)
+            docker rmi ${OS}:${REL} || true
+            echo "### DONE."
+        done < ${VERSIONFILE}
+    done
+
+}
+
+gitpush(){
+    cd ${__dir}
+    git add -A
+    git commit -m "Automatic push from deployment script"
+    git push
+}
+
+while getopts "hda:" opt; do
+    case $opt in
+        a)
+            ARCH=$OPTARG
+            ;;
+        d)
+            DAILY=1
+            ;;
+        u)
+            HUB_USER=$OPTARG
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+
+export ARCH=${ARCH:-armhf}
+DAILY=${DAILY:-0}
+HUB_USER=${HUB_USER:-m3adow}
+SKEL_DIR=${SKEL_DIR:-_skel}
+
+mkimages
+gitpush
