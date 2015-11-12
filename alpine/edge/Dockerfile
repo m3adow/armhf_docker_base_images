@@ -1,3 +1,3 @@
-FROM m3adow/alpine_armhf:edge
+FROM m3adow/armhf-alpine:edge
 MAINTAINER m3adow
 CMD ["/bin/sh"]

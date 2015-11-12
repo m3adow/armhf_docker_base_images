@@ -46,7 +46,9 @@ mkimages() {
                 [ -f "${OSDIR}/${REL}/${FILE}" ] || {
                     cp --preserve=mode,ownership "${__dir}/${SKEL_DIR}/${FILE}" "${OSDIR}/${MAIN_TAG}/"
                     # substitute placeholders if existing
-                    sed -i -e "s/%HUB_USER%/${HUB_USER}/g" -e "s/%REL%/${REL}/g" -e "s/%OS%/${OS}/g" -e "s/%MAIN_TAG%/${MAIN_TAG}/g" "${OSDIR}/${MAIN_TAG}/${FILE}"
+                    sed -i -e "s/%HUB_USER%/${HUB_USER}/g" \
+                        -e "s/%REL%/${REL}/g" -e "s/%OS%/${OS}/g" \
+                        -e "s/%MAIN_TAG%/${MAIN_TAG}/g" "${OSDIR}/${MAIN_TAG}/${FILE}"
                 }
             done
 

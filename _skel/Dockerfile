@@ -1,3 +1,3 @@
-FROM %HUB_USER%/alpine_armhf:%MAIN_TAG%
+FROM %HUB_USER%/armhf-%OS%:%MAIN_TAG%
 MAINTAINER m3adow
 CMD ["/bin/sh"]
