@@ -54,17 +54,15 @@ mkimages() {
             done
 
 # Not needed anymore?
-: << EOF
-            IMAGE_ID=$(docker images -q |head -1)
-            # Create correct Tags and remove unneeded ones from the creation script
-            for TAG in $(echo "${TAGS_CSV}"| sed 's/,/ /g')
-            do
-                FULL_IMAGE_NAME="${HUB_USER}/${ARCH}-${OS}:${TAG}"
-                docker tag -f ${IMAGE_ID}  ${FULL_IMAGE_NAME}
-                docker rmi ${OS}:${TAG} || true
-                docker push ${FULL_IMAGE_NAME}
-            done
-EOF
+#            IMAGE_ID=$(docker images -q |head -1)
+#            # Create correct Tags and remove unneeded ones from the creation script
+#            for TAG in $(echo "${TAGS_CSV}"| sed 's/,/ /g')
+#            do
+#                FULL_IMAGE_NAME="${HUB_USER}/${ARCH}-${OS}:${TAG}"
+#                docker tag -f ${IMAGE_ID}  ${FULL_IMAGE_NAME}
+#                docker rmi ${OS}:${TAG} || true
+#                docker push ${FULL_IMAGE_NAME}
+#            done
             # Remove the docker container started for testing the image and the last unneeded tag
             docker rm $(docker ps -l -q)
             docker rmi ${OS}:${REL} || true

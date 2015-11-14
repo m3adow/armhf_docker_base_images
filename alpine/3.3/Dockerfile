@@ -1,3 +1,4 @@
-FROM m3adow/armhf-alpine:3.3
+FROM scratch
 MAINTAINER m3adow
+ADD rootfs.tar.xz /
 CMD ["/bin/sh"]
