@@ -1,5 +1,6 @@
 #!/bin/sh
 
+set -x
 set -e
 
 [ $(id -u) -eq 0 ] || {
@@ -41,8 +42,8 @@ pack() {
     local id
     id=$(tar --numeric-owner -C $ROOTFS -c . | docker import - alpine:$REL)
 
-    docker tag $id alpine:latest
-    docker run -i -t alpine printf 'alpine:%s with id=%s created!\n' $REL $id
+    docker tag -f $id alpine:latest
+    docker run -i alpine printf 'alpine:%s with id=%s created!\n' $REL $id
 }
 
 save() {

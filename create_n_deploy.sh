@@ -1,6 +1,7 @@
-#!/usr/bin env bash
+#!/usr/bin/env bash
 set -e
 set -u
+set -x
 
 # Set magic variable for working dir, thx kvz.io
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -57,7 +58,7 @@ mkimages() {
             for TAG in $(echo "${TAGS_CSV}"| sed 's/,/ /g')
             do
                 FULL_IMAGE_NAME="${HUB_USER}/${ARCH}-${OS}:${TAG}"
-                docker tag ${IMAGE_ID}  ${FULL_IMAGE_NAME}
+                docker tag -f ${IMAGE_ID}  ${FULL_IMAGE_NAME}
                 docker rmi ${OS}:${TAG} || true
                 docker push ${FULL_IMAGE_NAME}
             done
