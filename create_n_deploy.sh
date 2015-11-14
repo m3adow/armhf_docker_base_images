@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 set -u
-set -x
 
 # Set magic variable for working dir, thx kvz.io
 __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

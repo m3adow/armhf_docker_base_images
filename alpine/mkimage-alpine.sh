@@ -1,6 +1,4 @@
 #!/bin/sh
-
-set -x
 set -e
 
 [ $(id -u) -eq 0 ] || {
