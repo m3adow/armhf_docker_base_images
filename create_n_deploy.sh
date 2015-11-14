@@ -43,7 +43,7 @@ mkimages() {
             # Check for Default files
             for FILE in $(ls -1 "${__dir}/${SKEL_DIR}")
             do
-                [ -f "${OSDIR}/${REL}/${FILE}" ] || {
+                [ -f "${OSDIR}/${MAIN_TAG}/${FILE}" ] || {
                     cp --preserve=mode,ownership "${__dir}/${SKEL_DIR}/${FILE}" "${OSDIR}/${MAIN_TAG}/"
                     # substitute placeholders if existing
                     sed -i -e "s/%HUB_USER%/${HUB_USER}/g" \
