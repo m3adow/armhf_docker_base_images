@@ -1,3 +1,4 @@
-FROM %HUB_USER%/armhf-%OS%:%MAIN_TAG%
+FROM scratch
 MAINTAINER m3adow
+ADD rootfs.tar.xz /
 CMD ["/bin/sh"]
