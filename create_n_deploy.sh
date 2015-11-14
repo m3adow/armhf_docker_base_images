@@ -52,8 +52,7 @@ mkimages() {
                 }
             done
 
-# Not needed anymore?
-#            IMAGE_ID=$(docker images -q |head -1)
+            IMAGE_ID=$(docker images -q |head -1)
 #            # Create correct Tags and remove unneeded ones from the creation script
 #            for TAG in $(echo "${TAGS_CSV}"| sed 's/,/ /g')
 #            do
@@ -63,8 +62,10 @@ mkimages() {
 #                docker push ${FULL_IMAGE_NAME}
 #            done
             # Remove the docker container started for testing the image and the last unneeded tag
+            # docker rmi -f ${OS}:${REL} || true
             docker rm $(docker ps -l -q)
-            docker rmi ${OS}:${REL} || true
+            docker rmi -f ${IMAGE_ID}
+            
             echo "### DONE."
         done < ${VERSIONFILE}
     done
@@ -102,4 +103,4 @@ HUB_USER=${HUB_USER:-m3adow}
 SKEL_DIR=${SKEL_DIR:-_skel}
 
 mkimages
-gitpush
+#gitpush
