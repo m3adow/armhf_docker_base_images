@@ -22,9 +22,9 @@ mkimages() {
     do
         OS=${OSDIR##*/}
         VERSIONFILE="${OSDIR}/Versionfile"
-        if [ ! -f "${VERSIONFILE}" -o ! -r ${VERSIONFILE} ]
+        if [ ! -f "${VERSIONFILE}" -o ! -r ${VERSIONFILE} -o ! -f "${OSDIR}/wrapper.sh" ]
         then
-            echo "${OS}: Error with Versionfile. Skipping."
+            echo "${OS}: Not all needed files accessible. Skipping."
             continue
         fi
 
@@ -36,10 +36,11 @@ mkimages() {
             TAGS_CSV=${VERSIONLINE##*:}
             MAIN_TAG=${TAGS_CSV%%,*}
             echo "### Processing '${VERSIONLINE}'."
-            bash "${OSDIR}/mkimage-${OS}.sh" -r "${REL}" -s </dev/null
+            # bash "${OSDIR}/mkimage-${OS}.sh" -r "${REL}" -s </dev/null
+            bash "${OSDIR}/wrapper.sh" -a ${ARCH} -o ${OS} -r ${REL} </dev/null
 
             mkdir -p "${OSDIR}/${MAIN_TAG}"
-            [ -f "rootfs.tar.xz" ] && mv "rootfs.tar.xz" "${OSDIR}/${MAIN_TAG}"
+            [ -f "${__dir}/rootfs.tar.xz" ] && mv "${__dir}/rootfs.tar.xz" "${OSDIR}/${MAIN_TAG}"
             # Check for Default files
             for FILE in $(ls -1 "${__dir}/${SKEL_DIR}")
             do
@@ -63,8 +64,8 @@ mkimages() {
 #            done
             # Remove the docker container started for testing the image and the last unneeded tag
             # docker rmi -f ${OS}:${REL} || true
-            docker rm $(docker ps -l -q)
-            docker rmi -f ${IMAGE_ID}
+            docker rm $(docker ps -l -q) 2>/dev/null || true
+            docker rmi -f ${IMAGE_ID} 2>/dev/null || true
             
             echo "### DONE."
         done < ${VERSIONFILE}
@@ -79,13 +80,10 @@ gitpush(){
     git push
 }
 
-while getopts "hda:" opt; do
+while getopts "ha:u:" opt; do
     case $opt in
         a)
             ARCH=$OPTARG
-            ;;
-        d)
-            DAILY=1
             ;;
         u)
             HUB_USER=$OPTARG
