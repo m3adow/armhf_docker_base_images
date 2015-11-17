@@ -101,4 +101,4 @@ HUB_USER=${HUB_USER:-m3adow}
 SKEL_DIR=${SKEL_DIR:-_skel}
 
 mkimages
-#gitpush
+gitpush
