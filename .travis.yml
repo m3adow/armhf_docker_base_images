@@ -13,4 +13,4 @@ before_script:
   - cd $DOCKER_BUILD_DIR && docker build -t armtest .
   
 script:
-  - docker run -it armtest "echo 'Test passed.'"
+  - docker run -it armtest /bin/echo 'Test passed.'
