@@ -11,8 +11,6 @@ env:
   - DOCKER_BUILD_DIR=alpine/edge
   - DOCKER_BUILD_DIR=busybox/latest
   
-before_script:
-  - cd $DOCKER_BUILD_DIR && docker build -t armtest .
-  
+# As Travis CI doesn't support ARM images yet, only basic build testing
 script:
-  - docker run -it armtest true
+  - cd $DOCKER_BUILD_DIR && docker build -t armtest .
