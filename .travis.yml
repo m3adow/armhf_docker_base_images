@@ -14,7 +14,7 @@ env:
   - DOCKER_BUILD_DIR=busybox/latest
   
 before-install:
-  - cd $DOCKER_BUILD_DIR && docker build -t armtest .
+  - cd "$DOCKER_BUILD_DIR" && docker build -t armtest .
   
 script:
   - docker run -it armtest ":"
