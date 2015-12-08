@@ -9,7 +9,7 @@ env:
   - DOCKER_BUILD_DIR=alpine/edge
   - DOCKER_BUILD_DIR=busybox/latest
   
-before-install:
+before_script:
   - cd $DOCKER_BUILD_DIR && docker build -t armtest .
   
 script:
