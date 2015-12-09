@@ -1,0 +1,16 @@
+sudo: required
+
+language: bash
+
+services:
+  - docker
+  
+env:
+  - DOCKER_BUILD_DIR=alpine/3.2
+  - DOCKER_BUILD_DIR=alpine/3.3
+  - DOCKER_BUILD_DIR=alpine/edge
+  - DOCKER_BUILD_DIR=busybox/latest
+  
+# As Travis CI doesn't support ARM images yet, only basic build testing
+script:
+  - cd $DOCKER_BUILD_DIR && docker build -t armtest .
