@@ -1,4 +1,5 @@
 ### Docker Base Images for the armhf Platform
+[![Build Status](https://travis-ci.org/m3adow/docker-dokuwiki-httpd.svg?branch=master)](https://travis-ci.org/m3adow/docker-dokuwiki-httpd)
 
 As Docker doesn't officially support armhf, there are little armhf base images to be found.
 
