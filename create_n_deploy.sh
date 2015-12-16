@@ -75,6 +75,8 @@ mkimages() {
 
 gitpush(){
     cd ${__dir}
+    # Do a pull in case I changed the repo on Github again
+    git pull --no-edit
     git add -A
     git commit -m "Automatic push from deployment script"
     git push
