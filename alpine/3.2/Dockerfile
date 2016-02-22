@@ -1,4 +1,4 @@
 FROM scratch
-MAINTAINER m3adow
+MAINTAINER Till Wiese <mail-github.com@till-wiese.de>
 ADD rootfs.tar.xz /
 CMD ["/bin/sh"]
