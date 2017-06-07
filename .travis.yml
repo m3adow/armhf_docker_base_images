@@ -6,9 +6,9 @@ services:
   - docker
   
 env:
-  - DOCKER_BUILD_DIR=alpine/3.3
   - DOCKER_BUILD_DIR=alpine/3.4
   - DOCKER_BUILD_DIR=alpine/3.5
+  - DOCKER_BUILD_DIR=alpine/3.6
   - DOCKER_BUILD_DIR=alpine/edge
   - DOCKER_BUILD_DIR=busybox/latest
   
